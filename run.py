@@ -5,6 +5,7 @@ from flask import (
     request, session, url_for)
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
+from werkzeug.security import generate_password_hash, check_password_hash
 if os.path.exists('env.py'):
     import env
 
@@ -23,6 +24,11 @@ app.secret_key = os.environ.get("SECRET_KEY")
 
 # Create an instance of PyMongo
 mongo = PyMongo(app)
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    return render_template("register.html")
 
 
 # Route decorator for the main route and fuction to execute the main route
