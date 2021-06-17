@@ -25,7 +25,7 @@ app.secret_key = os.environ.get("SECRET_KEY")
 mongo = PyMongo(app)
 
 
-# Route decorator for the main route
+# Route decorator for the main route and fuction to execute the main route
 @app.route("/")
 @app.route("/get_tasks")
 def get_tasks():
