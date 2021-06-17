@@ -26,12 +26,32 @@ app.secret_key = os.environ.get("SECRET_KEY")
 mongo = PyMongo(app)
 
 
+# Function to execute the registration page and form
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    if request.method == "POST":
+        # Check if the username already exists in db
+        existing_user = mongo.db.users.find_one(
+            {"username": request.form.get("username").lower()})
+
+        if existing_user:
+            flash("Username already exists")
+            return redirect(url_for("register"))
+
+        register = {
+            "username": request.form.get("username").lower(),
+            "password": generate_password_hash(request.form.get("password"))
+        }
+        mongo.db.users.insert_one(register)
+
+        # Put the new user into 'session' cookie
+        session['user'] = request.form.get("username").lower()
+        flash("Registration Successful")
+
     return render_template("register.html")
 
 
-# Route decorator for the main route and fuction to execute the main route
+# Route decorator for the main route and function to execute the main route
 @app.route("/")
 @app.route("/get_tasks")
 def get_tasks():
