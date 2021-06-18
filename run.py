@@ -26,6 +26,14 @@ app.secret_key = os.environ.get("SECRET_KEY")
 mongo = PyMongo(app)
 
 
+# Route decorator for the main route and function to execute the main route
+@app.route("/")
+@app.route("/get_tasks")
+def get_tasks():
+    tasks = list(mongo.db.tasks.find())
+    return render_template("tasks.html", tasks=tasks)
+
+
 # Function to execute the registration page and form
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -102,12 +110,9 @@ def logout():
     return redirect(url_for("login"))
 
 
-# Route decorator for the main route and function to execute the main route
-@app.route("/")
-@app.route("/get_tasks")
-def get_tasks():
-    tasks = list(mongo.db.tasks.find())
-    return render_template("tasks.html", tasks=tasks)
+@app.route("/add_task")
+def add_task():
+    return render_template("add_task.html")
 
 
 # Define host and port for the app
