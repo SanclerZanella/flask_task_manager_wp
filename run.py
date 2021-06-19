@@ -164,6 +164,13 @@ def delete_task(task_id):
     return redirect(url_for("get_tasks"))
 
 
+# Function to execute the get_categories (Manage categories on DB)
+@app.route("/get_categories")
+def get_categories():
+    categories = list(mongo.db.categories.find().sort("category_name", 1))
+    return render_template("categories.html", categories=categories)
+
+
 # Define host and port for the app
 # Tell the app how and where to run
 if __name__ == "__main__":
