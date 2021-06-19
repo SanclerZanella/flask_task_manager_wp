@@ -133,7 +133,7 @@ def add_task():
     return render_template("add_task.html", categories=categories)
 
 
-# Function to execute the edit_task page and form (Update the the tasks on DB)
+# Function to execute the edit_task page and form (Update a task on DB)
 @app.route("/edit_task/<task_id>", methods=["GET", "POST"])
 def edit_task(task_id):
     if request.method == "POST":
@@ -154,6 +154,14 @@ def edit_task(task_id):
     # Catch categories from db for dropdown menu
     categories = mongo.db.categories.find().sort("category_name", 1)
     return render_template("edit_task.html", task=task, categories=categories)
+
+
+# Function to execute the delete_task (Delete a task on DB)
+@app.route("/delete_task/<task_id>")
+def delete_task(task_id):
+    mongo.db.tasks.remove({"_id": ObjectId(task_id)})
+    flash("Task Successfuly Deleted")
+    return redirect(url_for("get_tasks"))
 
 
 # Define host and port for the app
