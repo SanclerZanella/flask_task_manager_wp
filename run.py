@@ -34,7 +34,7 @@ def get_tasks():
     return render_template("tasks.html", tasks=tasks)
 
 
-# Function to execute the registration page and form
+# Function to execute the registration page and form (Insert the an user on DB)
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -60,7 +60,7 @@ def register():
     return render_template("register.html")
 
 
-# Function to execute the login page and form
+# Function to execute the login page and form (Read from DB)
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -102,7 +102,7 @@ def profile(username):
     return redirect(url_for("login"))
 
 
-# Function to logout the user
+# Function to logout the user (Clear the session cookie)
 @app.route("/logout")
 def logout():
     # Remove user from session cookie
@@ -111,7 +111,7 @@ def logout():
     return redirect(url_for("login"))
 
 
-# Function to execute the add_task page and form
+# Function to execute the add_task page and form (Insert a tasks on DB)
 @app.route("/add_task", methods=["GET", "POST"])
 def add_task():
     if request.method == "POST":
@@ -133,9 +133,22 @@ def add_task():
     return render_template("add_task.html", categories=categories)
 
 
-# Function to execute the edit_task page and form
+# Function to execute the edit_task page and form (Update the the tasks on DB)
 @app.route("/edit_task/<task_id>", methods=["GET", "POST"])
 def edit_task(task_id):
+    if request.method == "POST":
+        is_urgent = "on" if request.form.get("is_urgent") else "off"
+        submit = {
+            "category_name": request.form.get("category_name"),
+            "task_name": request.form.get("task_name"),
+            "task_description": request.form.get("task_description"),
+            "is_urgent": is_urgent,
+            "due_date": request.form.get("due_date"),
+            "created_by": session["user"]
+        }
+        mongo.db.tasks.update({"_id": ObjectId(task_id)}, submit)
+        flash("Task Successfuly Updated")
+
     task = mongo.db.tasks.find_one({"_id": ObjectId(task_id)})
 
     # Catch categories from db for dropdown menu
