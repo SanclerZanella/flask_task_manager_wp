@@ -133,6 +133,16 @@ def add_task():
     return render_template("add_task.html", categories=categories)
 
 
+# Function to execute the edit_task page and form
+@app.route("/edit_task/<task_id>", methods=["GET", "POST"])
+def edit_task(task_id):
+    task = mongo.db.tasks.find_one({"_id": ObjectId(task_id)})
+
+    # Catch categories from db for dropdown menu
+    categories = mongo.db.categories.find().sort("category_name", 1)
+    return render_template("edit_task.html", task=task, categories=categories)
+
+
 # Define host and port for the app
 # Tell the app how and where to run
 if __name__ == "__main__":
