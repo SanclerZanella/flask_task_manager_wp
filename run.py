@@ -34,6 +34,14 @@ def get_tasks():
     return render_template("tasks.html", tasks=tasks)
 
 
+# Function to search a task
+@app.route("/search", methods=["GET", "POST"])
+def search():
+    query = request.form.get("query")
+    tasks = list(mongo.db.tasks.find({"$text": {"$search": query}}))
+    return render_template("tasks.html", tasks=tasks)
+
+
 # Function to execute the registration page and form (Insert the an user on DB)
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -207,6 +215,7 @@ def delete_category(category_id):
     mongo.db.categories.remove({"_id": ObjectId(category_id)})
     flash("Category Successfuly Deleted")
     return redirect(url_for("get_categories"))
+
 
 # Define host and port for the app
 # Tell the app how and where to run
